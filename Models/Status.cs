@@ -6,13 +6,11 @@ using System.Web;
 
 namespace LigaTabajara.Models
 {
-	public enum PePreferido
+	public enum Status
 	{
-		[Display(Name = "Esquerdo")]
-		ESQUERDO = 1,
-		[Display(Name = "Direito")]
-		DIREITO = 2,
-		[Display(Name = "Ambidestro")]
-		AMBIDESTRO = 3
+		[Display(Name = "Apto")]
+		APTO = 1,
+		[Display(Name = "Não Apto")]
+		NAO_APTO = 2
 	}
 }

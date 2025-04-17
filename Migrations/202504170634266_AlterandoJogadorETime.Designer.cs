@@ -7,13 +7,13 @@ namespace LigaTabajara.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.1")]
-    public sealed partial class AdicionandoTabelaJogador : IMigrationMetadata
+    public sealed partial class AlterandoJogadorETime : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AdicionandoTabelaJogador));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(AlterandoJogadorETime));
         
         string IMigrationMetadata.Id
         {
-            get { return "202504112219385_AdicionandoTabelaJogador"; }
+            get { return "202504170634266_AlterandoJogadorETime"; }
         }
         
         string IMigrationMetadata.Source

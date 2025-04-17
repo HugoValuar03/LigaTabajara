@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Globalization;
+using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -16,6 +16,13 @@ namespace LigaTabajara
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+        }
+
+        protected void Application_BeginRequest()
+        {
+            var culture = new CultureInfo("pt-BR");
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
         }
     }
 }

@@ -52,10 +52,29 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNet.TelemetryCorrelation, Version=1.0.8.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.TelemetryCorrelation.1.0.8\lib\net45\Microsoft.AspNet.TelemetryCorrelation.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.4.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Diagnostics.DiagnosticSource.4.6.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -127,24 +146,47 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\ComissaoTecnicasController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\JogadoresController.cs" />
+    <Compile Include="Controllers\TimesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202504112214309_InitialCreate.cs" />
-    <Compile Include="Migrations\202504112214309_InitialCreate.Designer.cs">
-      <DependentUpon>202504112214309_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\202504151426208_FirstMigration.cs" />
+    <Compile Include="Migrations\202504151426208_FirstMigration.Designer.cs">
+      <DependentUpon>202504151426208_FirstMigration.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202504112219385_AdicionandoTabelaJogador.cs" />
-    <Compile Include="Migrations\202504112219385_AdicionandoTabelaJogador.Designer.cs">
-      <DependentUpon>202504112219385_AdicionandoTabelaJogador.cs</DependentUpon>
+    <Compile Include="Migrations\202504151428353_AdicionandoJogador.cs" />
+    <Compile Include="Migrations\202504151428353_AdicionandoJogador.Designer.cs">
+      <DependentUpon>202504151428353_AdicionandoJogador.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202504160409049_CompletandoModel.cs" />
+    <Compile Include="Migrations\202504160409049_CompletandoModel.Designer.cs">
+      <DependentUpon>202504160409049_CompletandoModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202504170243307_CorrecaoTime.cs" />
+    <Compile Include="Migrations\202504170243307_CorrecaoTime.Designer.cs">
+      <DependentUpon>202504170243307_CorrecaoTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202504170442026_AlterandoAltura.cs" />
+    <Compile Include="Migrations\202504170442026_AlterandoAltura.Designer.cs">
+      <DependentUpon>202504170442026_AlterandoAltura.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202504170634266_AlterandoJogadorETime.cs" />
+    <Compile Include="Migrations\202504170634266_AlterandoJogadorETime.Designer.cs">
+      <DependentUpon>202504170634266_AlterandoJogadorETime.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Cargo.cs" />
+    <Compile Include="Models\Classificacao.cs" />
+    <Compile Include="Models\Gol.cs" />
+    <Compile Include="Models\Partida.cs" />
     <Compile Include="Models\ComissaoTecnica.cs" />
     <Compile Include="Models\CorUniforme.cs" />
     <Compile Include="Models\Jogador.cs" />
     <Compile Include="Models\LigaTabajaraContext.cs" />
+    <Compile Include="Models\Status.cs" />
     <Compile Include="Models\Time.cs" />
     <Compile Include="Models\PePreferido.cs" />
     <Compile Include="Models\Posicao.cs" />
@@ -201,6 +243,22 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\CadastroJogadores.cshtml" />
+    <Content Include="Views\ComissaoTecnicas\Create.cshtml" />
+    <Content Include="Views\ComissaoTecnicas\Delete.cshtml" />
+    <Content Include="Views\ComissaoTecnicas\Details.cshtml" />
+    <Content Include="Views\ComissaoTecnicas\Edit.cshtml" />
+    <Content Include="Views\ComissaoTecnicas\Index.cshtml" />
+    <Content Include="Views\Jogadores\Create.cshtml" />
+    <Content Include="Views\Jogadores\Index.cshtml" />
+    <Content Include="Views\Times\Create.cshtml" />
+    <Content Include="Views\Times\Index.cshtml" />
+    <Content Include="Views\Jogadores\Edit.cshtml" />
+    <Content Include="Views\Jogadores\delete.cshtml" />
+    <Content Include="Views\Jogadores\Details.cshtml" />
+    <Content Include="Views\Times\Delete.cshtml" />
+    <Content Include="Views\Times\Edit.cshtml" />
+    <Content Include="Views\Times\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -233,11 +291,23 @@
     <Content Include="Scripts\jquery-3.7.0.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202504112214309_InitialCreate.resx">
-      <DependentUpon>202504112214309_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202504151426208_FirstMigration.resx">
+      <DependentUpon>202504151426208_FirstMigration.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202504112219385_AdicionandoTabelaJogador.resx">
-      <DependentUpon>202504112219385_AdicionandoTabelaJogador.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202504151428353_AdicionandoJogador.resx">
+      <DependentUpon>202504151428353_AdicionandoJogador.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504160409049_CompletandoModel.resx">
+      <DependentUpon>202504160409049_CompletandoModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504170243307_CorrecaoTime.resx">
+      <DependentUpon>202504170243307_CorrecaoTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504170442026_AlterandoAltura.resx">
+      <DependentUpon>202504170442026_AlterandoAltura.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504170634266_AlterandoJogadorETime.resx">
+      <DependentUpon>202504170634266_AlterandoJogadorETime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

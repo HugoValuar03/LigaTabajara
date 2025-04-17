@@ -7,13 +7,13 @@ namespace LigaTabajara.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.1")]
-    public sealed partial class InitialCreate : IMigrationMetadata
+    public sealed partial class AlterandoAltura : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialCreate));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(AlterandoAltura));
         
         string IMigrationMetadata.Id
         {
-            get { return "202504112214309_InitialCreate"; }
+            get { return "202504170442026_AlterandoAltura"; }
         }
         
         string IMigrationMetadata.Source

@@ -1,0 +1,97 @@
+﻿@model LigaTabajara.Models.Time
+
+@{
+    ViewBag.Title = "Cadastrar Time";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5" style="max-width: 700px">
+    <h2 class="text-center mb-4">Cadastrar Time</h2>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+<div class="card shadow p-4 gap-4" style="display: flex; justify-content: center;">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <!-- Nome -->
+    <div class="form-group row">
+        @Html.LabelFor(model => model.Nome, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-8">
+            @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Nome, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <!-- Estado -->
+    <div class="form-group row">
+        @Html.LabelFor(model => model.Estado, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-8">
+            @Html.EditorFor(model => model.Estado, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Estado, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <!-- Ano de Fundação -->
+    <div class="form-group row">
+        @Html.LabelFor(model => model.AnoFundacao, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-8">
+            @Html.EditorFor(model => model.AnoFundacao, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+            @Html.ValidationMessageFor(model => model.AnoFundacao, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <!-- Estádio -->
+    <div class="form-group row">
+        @Html.LabelFor(model => model.Estadio, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-8">
+            @Html.EditorFor(model => model.Estadio, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Estadio, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <!-- Capacidade do Estádio -->
+    <div class="form-group row">
+        @Html.LabelFor(model => model.CapacidadeEstadio, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-8">
+            @Html.EditorFor(model => model.CapacidadeEstadio, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.CapacidadeEstadio, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <!-- Cor do Uniforme -->
+    <div class="form-group row">
+        @Html.LabelFor(model => model.CorUniforme, htmlAttributes: new { @class = "control-label" })
+        <div class="col-md-8">
+            @Html.DropDownListFor(model => model.CorUniforme, (IEnumerable<SelectListItem>)ViewBag.CoresUniforme, "Selecione a cor do uniforme", htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.CorUniforme, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <!-- Status -->
+    <div class="form-group row">
+        @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(model => model.Status, new { @class = "form-control", value = "Inativo", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    
+
+    <!-- Botões -->
+    <div class="form-group row">
+        <div class="col-md-offset-3 col-md-8">
+            <input type="submit" value="Cadastrar" class="btn btn-primary" />
+        </div>
+        <div class="mt-4">
+            @Html.ActionLink("Voltar para a Lista", "Index", null, new { @class = "btn btn-secondary" })
+        </div>
+    </div>
+</div>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
