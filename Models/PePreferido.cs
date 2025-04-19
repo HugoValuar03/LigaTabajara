@@ -9,10 +9,10 @@ namespace LigaTabajara.Models
 	public enum PePreferido
 	{
 		[Display(Name = "Esquerdo")]
-		ESQUERDO = 1,
+		ESQUERDO = 0,
 		[Display(Name = "Direito")]
-		DIREITO = 2,
+		DIREITO = 1,
 		[Display(Name = "Ambidestro")]
-		AMBIDESTRO = 3
+		AMBIDESTRO = 2
 	}
 }

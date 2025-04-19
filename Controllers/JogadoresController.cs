@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data;
+﻿using LigaTabajara.Models;
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using LigaTabajara.Models;
 
 namespace LigaTabajara.Controllers
 {
@@ -15,61 +11,71 @@ namespace LigaTabajara.Controllers
     {
         private LigaTabajaraContext db = new LigaTabajaraContext();
 
-        // GET: Jogadors
-        public ActionResult Index()
+        // GET: Jogadores
+        public ActionResult Index(string searchPosicao)
         {
-            var jogadores = db.Jogadores
-                .Include(j => j.Time)
-                .AsNoTracking() // Melhora performance
-                .ToList();
+            // Carregar os valores do enum Posicao para o dropdown
+            var posicoes = Enum.GetValues(typeof(Posicao))
+                .Cast<Posicao>()
+                .Select(p => new SelectListItem
+                {
+                    Value = ((int)p).ToString(),
+                    Text = p.ToString()
+                }).ToList();
 
-            return View(jogadores);
+            // Adicionar uma opção padrão (opcional)
+            posicoes.Insert(0, new SelectListItem { Value = "", Text = "Selecione a Posição" });
+
+            ViewBag.searchPosicao = posicoes;
+
+            // Carregar a lista de jogadores
+            var jogadores = db.Jogadores.Include(j => j.Time).AsQueryable();
+
+            // Filtrar por posição, se uma posição foi selecionada
+            if (!string.IsNullOrEmpty(searchPosicao) && int.TryParse(searchPosicao, out int posicaoId))
+            {
+                jogadores = jogadores.Where(j => (int)j.Posicao == posicaoId);
+            }
+
+            return View(jogadores.ToList());
         }
 
-        // Nos métodos Details, Delete, etc. adicione:
-        
-
-        // GET: Jogadors/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Jogador jogador = db.Jogadores.Find(id);
-            if (jogador == null)
-            {
-                return HttpNotFound();
-            }
-            return View(jogador);
-        }
-
-        // GET: Jogadors/Create
+        // GET: Jogadores/Create
         public ActionResult Create()
         {
-            PopularDropDowns();
+            ViewBag.TimeId = new SelectList(db.Times, "Id", "Nome");
             return View();
         }
 
-        // POST: Jogadors/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Jogadores/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Jogador jogador)
+        public ActionResult Create([Bind(Include = "Id,Nome,DataNascimento,Nacionalidade,Posicao,NumeroCamisa,Altura,Peso,PePreferido,TimeId")] Jogador jogador)
         {
             if (ModelState.IsValid)
             {
                 db.Jogadores.Add(jogador);
                 db.SaveChanges();
+
+                // Atualizar o status do time associado
+                var time = db.Times
+                    .Include(t => t.Jogadores)
+                    .Include(t => t.ComissaoTecnicas)
+                    .SingleOrDefault(t => t.Id == jogador.TimeId);
+                if (time != null)
+                {
+                    time.AtualizarStatus();
+                    db.SaveChanges();
+                }
+
                 return RedirectToAction("Index");
             }
 
-            PopularDropDowns(jogador.TimeId);
+            ViewBag.TimeId = new SelectList(db.Times, "Id", "Nome", jogador.TimeId);
             return View(jogador);
         }
 
-        // GET: Jogadors/Edit/5
+        // GET: Jogadores/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -81,62 +87,66 @@ namespace LigaTabajara.Controllers
             {
                 return HttpNotFound();
             }
-            PopularDropDowns(jogador.TimeId);
+            ViewBag.TimeId = new SelectList(db.Times, "Id", "Nome", jogador.TimeId);
             return View(jogador);
         }
 
-        private void PopularDropDowns(int? selectedTimeId = null)
-        {
-            // Lista de Times
-            ViewBag.TimeId = new SelectList(db.Times, "Id", "Nome", selectedTimeId);
-
-            // Lista de Pé Preferido
-            ViewBag.PePreferidoList = new SelectList(
-                Enum.GetValues(typeof(PePreferido))
-                    .Cast<PePreferido>()
-                    .Select(p => new SelectListItem
-                    {
-                        Text = p.ToString(),
-                        Value = ((int)p).ToString()
-                    }), "Value", "Text");
-
-            // Lista de Posições (se necessário)
-            ViewBag.PosicaoList = new SelectList(
-                Enum.GetValues(typeof(Posicao))
-                    .Cast<Posicao>()
-                    .Select(p => new SelectListItem
-                    {
-                        Text = p.ToString(),
-                        Value = ((int)p).ToString()
-                    }), "Value", "Text");
-
-            var posicaoItems = Enum.GetValues(typeof(Posicao))
-                .Cast<Posicao>()
-                .Select(p => new {
-                    Value = (int)p,
-                    Text = GetEnumDescription(p)
-                });
-
-                    ViewBag.PosicaoList = new SelectList(posicaoItems, "Value", "Text");
-        }
-
-        private string GetEnumDescription(Enum value)
-        {
-            var field = value.GetType().GetField(value.ToString());
-            var attribute = (DisplayAttribute)Attribute.GetCustomAttribute(field, typeof(DisplayAttribute));
-            return attribute != null ? attribute.Name : value.ToString();
-        }
-
-        // POST: Jogadors/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Jogadores/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Nome,DataNascimento,Nacionalidade,Posicao,NumeroCamisa,Altura,Peso,PePreferido,TimeId")] Jogador jogador)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(jogador).State = EntityState.Modified;
+                var jogadorToUpdate = db.Jogadores
+                    .Include(j => j.Time)
+                    .SingleOrDefault(j => j.Id == jogador.Id);
+
+                if (jogadorToUpdate == null)
+                {
+                    return HttpNotFound();
+                }
+
+                // Armazenar o TimeId antigo para atualizar o status do time anterior, se necessário
+                int? oldTimeId = jogadorToUpdate.TimeId;
+
+                // Atualizar as propriedades manualmente
+                jogadorToUpdate.Nome = jogador.Nome;
+                jogadorToUpdate.DataNascimento = jogador.DataNascimento;
+                jogadorToUpdate.Nacionalidade = jogador.Nacionalidade;
+                jogadorToUpdate.Posicao = jogador.Posicao;
+                jogadorToUpdate.NumeroCamisa = jogador.NumeroCamisa;
+                jogadorToUpdate.Altura = jogador.Altura;
+                jogadorToUpdate.Peso = jogador.Peso;
+                jogadorToUpdate.PePreferido = jogador.PePreferido;
+                jogadorToUpdate.TimeId = jogador.TimeId;
+
+                db.Entry(jogadorToUpdate).State = EntityState.Modified;
+                db.SaveChanges();
+
+                // Atualizar o status do time atual
+                var timeAtual = db.Times
+                    .Include(t => t.Jogadores)
+                    .Include(t => t.ComissaoTecnicas)
+                    .SingleOrDefault(t => t.Id == jogador.TimeId);
+                if (timeAtual != null)
+                {
+                    timeAtual.AtualizarStatus();
+                }
+
+                // Atualizar o status do time anterior, se for diferente
+                if (oldTimeId != jogador.TimeId)
+                {
+                    var timeAntigo = db.Times
+                        .Include(t => t.Jogadores)
+                        .Include(t => t.ComissaoTecnicas)
+                        .SingleOrDefault(t => t.Id == oldTimeId);
+                    if (timeAntigo != null)
+                    {
+                        timeAntigo.AtualizarStatus();
+                    }
+                }
+
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -144,7 +154,7 @@ namespace LigaTabajara.Controllers
             return View(jogador);
         }
 
-        // GET: Jogadors/Delete/5
+        // GET: Jogadores/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -159,14 +169,35 @@ namespace LigaTabajara.Controllers
             return View(jogador);
         }
 
-        // POST: Jogadors/Delete/5
+        // POST: Jogadores/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Jogador jogador = db.Jogadores.Find(id);
+            Jogador jogador = db.Jogadores
+                .Include(j => j.Time)
+                .SingleOrDefault(j => j.Id == id);
+
+            if (jogador == null)
+            {
+                return HttpNotFound();
+            }
+
+            int timeId = jogador.TimeId;
             db.Jogadores.Remove(jogador);
             db.SaveChanges();
+
+            // Atualizar o status do time associado
+            var time = db.Times
+                .Include(t => t.Jogadores)
+                .Include(t => t.ComissaoTecnicas)
+                .SingleOrDefault(t => t.Id == timeId);
+            if (time != null)
+            {
+                time.AtualizarStatus();
+                db.SaveChanges();
+            }
+
             return RedirectToAction("Index");
         }
 

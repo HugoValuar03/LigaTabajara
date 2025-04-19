@@ -1,0 +1,186 @@
+﻿@model LigaTabajara.Models.Partida
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Create</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Partida</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <!-- Times -->
+        <div class="form-group">
+            @Html.LabelFor(model => model.TimeCasaId, "Time da Casa", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("TimeCasaId", null, htmlAttributes: new { @class = "form-control", id = "timeCasa" })
+                @Html.ValidationMessageFor(model => model.TimeCasaId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TimeForaId, "Time Visitante", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("TimeForaId", null, htmlAttributes: new { @class = "form-control", id = "timeFora" })
+                @Html.ValidationMessageFor(model => model.TimeForaId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <!-- Outros campos da partida -->
+        <div class="form-group">
+            @Html.LabelFor(model => model.DataHora, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    var dataValue = Model?.DataHora.ToString("yyyy-MM-ddTHH:mm") ?? DateTime.Now.ToString("yyyy-MM-ddTHH:mm");
+                }
+                @Html.TextBoxFor(model => model.DataHora,
+                    new
+                         {
+                        @class = "form-control",
+                        type = "datetime-local",
+                        @Value = dataValue
+                    })
+                @Html.ValidationMessageFor(model => model.DataHora, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Estadio, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select id="Estadio" name="Estadio" class="form-control">
+                    <option value="">Selecione os times primeiro</option>
+                </select>
+                @Html.ValidationMessageFor(model => model.Estadio, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Rodada, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Rodada, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Rodada, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <!-- Seção para cadastrar gols -->
+        <div class="form-group">
+            <label class="control-label col-md-2">Gols Marcados</label>
+            <div class="col-md-10" id="gols-container">
+                <div class="gol-item panel panel-default mb-3">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Jogador</label>
+                                <select name="jogadorId" class="form-control jogador-select">
+                                    <option value="">Selecione os times primeiro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Minuto</label>
+                                <input type="number" name="minuto" class="form-control" min="1" max="120" value="1" />
+                            </div>
+                            <div class="col-md-3">
+                                <label>Tipo do Gol</label>
+                                <select name="tipoGol" class="form-control">
+                                    <option value="Normal">Normal</option>
+                                    <option value="Penalti">Penalti</option>
+                                    <option value="Falta">Falta</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="contra" value="true" /> Gol Contra?
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-danger btn-remover-gol mt-4">X</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-offset-2 col-md-10">
+                <button type="button" id="btn-adicionar-gol" class="btn btn-success">Adicionar Gol</button>
+            </div>
+        </div>
+
+        <!-- Placar (será calculado automaticamente) -->
+        @Html.HiddenFor(model => model.PlacarCasa)
+        @Html.HiddenFor(model => model.PlacarFora)
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function() {
+            // Função para carregar estádios
+            $('#timeCasa, #timeFora').change(function() {
+                var timeCasaId = $('#timeCasa').val();
+                var timeForaId = $('#timeFora').val();
+
+                if (timeCasaId && timeForaId) {
+                    // Carrega estádios
+                    $.get('@Url.Action("GetEstadiosByTimes", "Partidas")', {
+                        timeCasaId: timeCasaId,
+                        timeForaId: timeForaId
+                    }, function(data) {
+                        var options = '<option value="">Selecione um estádio</option>';
+                        $.each(data, function(index, item) {
+                            options += '<option value="' + item.Estadio + '">' +
+                                      item.Estadio + ' (' + item.TimeNome + ')</option>';
+                        });
+                        $('#Estadio').html(options);
+                    });
+
+                    // Carrega jogadores (nova parte adicionada)
+                    $.get('@Url.Action("GetJogadoresByTimes", "Partidas")', {
+                        timeCasaId: timeCasaId,
+                        timeForaId: timeForaId
+                    }, function(data) {
+                        var options = '<option value="">Selecione o jogador</option>';
+                        $.each(data, function(index, jogador) {
+                            options += '<option value="' + jogador.id + '" data-time="' + jogador.timeId + '">' +
+                                      jogador.nome + ' (' + jogador.time + ')</option>';
+                        });
+                        $('.jogador-select').html(options);
+                    });
+                }
+            });
+
+            // Mantenha as funções para adicionar/remover gols
+            $('#btn-adicionar-gol').click(function() {
+                var novoItem = $('.gol-item').first().clone();
+                novoItem.find('input[type="number"]').val(1);
+                novoItem.find('select').prop('selectedIndex', 0);
+                novoItem.find('input[type="checkbox"]').prop('checked', false);
+                $('#gols-container').append(novoItem);
+            });
+
+            $(document).on('click', '.btn-remover-gol', function() {
+                if ($('.gol-item').length > 1) {
+                    $(this).closest('.gol-item').remove();
+                }
+            });
+        });
+    </script>
+}

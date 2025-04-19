@@ -1,68 +1,101 @@
 ﻿@model LigaTabajara.Models.Time
 
-<div>
-    <h4>Time</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
+@{
+    ViewBag.Title = $"Detalhes do Time: {Model.Nome}";
+}
 
-        <dd>
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
+<h2 class="text-center mb-4">Detalhes do Time: @Model.Nome</h2>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Estado)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.AnoFundacao)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.AnoFundacao)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Estadio)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Estadio)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.CapacidadeEstadio)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.CapacidadeEstadio)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.CorUniformeString)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.CorUniformeString)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-
-    </dl>
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h4>Informações Gerais</h4>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Nome</dt>
+            <dd class="col-sm-9">@Model.Nome</dd>
+            <dt class="col-sm-3">Cidade</dt>
+            <dd class="col-sm-9">@Model.Estado</dd>
+            <dt class="col-sm-3">Ano de Fundação</dt>
+            <dd class="col-sm-9">@Model.AnoFundacao.ToString("dd/MM/yyyy")</dd>
+            <dt class="col-sm-3">Estádio</dt>
+            <dd class="col-sm-9">@Model.Estadio (Capacidade: @Model.CapacidadeEstadio)</dd>
+            <dt class="col-sm-3">Cor do Uniforme</dt>
+            <dd class="col-sm-9">
+                @if ((int)Model.CorUniforme == 0)
+                {
+                    @:PRIMARIA
+                }
+                else
+                {
+                    @:SECUNDARIA
+                }
+            </dd>
+            <dt class="col-sm-3">Status</dt>
+            <dd class="col-sm-9"><span class="badge @(@Model.Status == LigaTabajara.Models.Status.APTO ? "bg-success" : "bg-danger")">@Model.Status</span></dd>
+        </dl>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+<h3 class="mt-4">Jogadores</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Posição</th>
+            <th>Número da Camisa</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var jogador in Model.Jogadores)
+        {
+            <tr>
+                <td>@jogador.Nome</td>
+                <td>@jogador.Posicao</td>
+                <td>@jogador.NumeroCamisa</td>
+                <td>
+                    <a href="@Url.Action("Details", "Jogadores", new { id = jogador.Id })" class="btn btn-sm btn-info">Detalhes</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3 class="mt-4">Comissão Técnica</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Cargo</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var membro in Model.ComissaoTecnicas)
+        {
+            <tr>
+                <td>@membro.Nome</td>
+                <td>@membro.Cargo</td>
+                <td>
+                    <a href="@Url.Action("Details", "ComissaoTecnicas", new { id = membro.Id })" class="btn btn-sm btn-info">Detalhes</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (ViewBag.Artilheiro != null)
+{
+    <h3 class="mt-4">Artilheiro do Time</h3>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <p><strong>Jogador:</strong> @ViewBag.Artilheiro.Nome</p>
+            <p><strong>Total de Gols:</strong> @ViewBag.GolsArtilheiro</p>
+        </div>
+    </div>
+}
+
+<div class="mt-4">
+    <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-primary">Editar</a>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Voltar</a>
+</div>

@@ -1,74 +1,66 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
-
-namespace LigaTabajara.Models
+﻿namespace LigaTabajara.Models
 {
-    public class Time
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
+    public partial class Time
     {
+        public Time()
+        {
+            Jogadores = new HashSet<Jogador>();
+            ComissaoTecnicas = new HashSet<ComissaoTecnica>();
+            PartidasCasa = new HashSet<Partida>();
+            PartidasFora = new HashSet<Partida>();
+        }
+
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "O nome do time é obrigatório.")]
-        [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres.")]
+        [Required]
         public string Nome { get; set; }
 
-        [Required(ErrorMessage = "O estado do time é obrigatório.")]
-        [StringLength(2, ErrorMessage = "O estado deve ter 2 caracteres.")]
+        [Required]
         public string Estado { get; set; }
 
-        [Required(ErrorMessage = "O ano de fundação do time é obrigatório.")]
+        [Required]
         [Display(Name = "Ano de Fundação")]
-        [DataType(DataType.DateTime)]
         public DateTime AnoFundacao { get; set; }
 
-        [Required(ErrorMessage = "O nome do estádio é obrigatório.")]
-        [StringLength(100, ErrorMessage = "O nome do estádio deve ter no máximo 100 caracteres.")]
+        [Required]
         public string Estadio { get; set; }
 
-        [Required(ErrorMessage = "A capacidade do estádio é obrigatória.")]
+        [Required]
         [Display(Name = "Capacidade do Estádio")]
-        [Range(0, int.MaxValue, ErrorMessage = "A capacidade do estádio deve ser um número positivo.")]
         public int CapacidadeEstadio { get; set; }
 
         [Required]
-        public string CorUniformeString { get; set; }
+        [Display(Name = "Cor do Uniforme")]
+        public CorUniforme CorUniforme { get; set; }
+
+        [Required]
+        public Status Status { get; set; }
 
         [NotMapped]
-        public CorUniforme CorUniforme
+        public bool IsApto
         {
             get
             {
-                return string.IsNullOrEmpty(CorUniformeString)
-                    ? CorUniforme.PRIMARIA
-                    : (CorUniforme)Enum.Parse(typeof(CorUniforme), CorUniformeString);
-            }
-            set
-            {
-                CorUniformeString = value.ToString();
+                int numeroJogadores = Jogadores?.Count ?? 0;
+                int numeroComissaoTecnica = ComissaoTecnicas?.Count ?? 0;
+                return numeroJogadores >= 30 && numeroComissaoTecnica >= 5;
             }
         }
 
-        [Display(Name = "Status")]
-        public string Status { get; set; }
-
-        [NotMapped]
-        public string StatusFormatado
+        // Método para atualizar o Status com base na aptidão
+        public void AtualizarStatus()
         {
-            get { return Status == "APTO" ? "Apto" : "Não Apto"; }
-            set { Status = value == "Apto" ? "APTO" : "NAO_APTO"; }
+            Status = IsApto ? Status.APTO : Status.NAO_APTO;
         }
-
-        [JsonIgnore]
-        public virtual ICollection<ComissaoTecnica> ComissaoTecnicas { get; set; }
 
         public virtual ICollection<Jogador> Jogadores { get; set; }
-
-        public virtual ICollection<Partida> PartidasMandante { get; set; }
-        public virtual ICollection<Partida> PartidasVisitante { get; set; }
+        public virtual ICollection<ComissaoTecnica> ComissaoTecnicas { get; set; }
+        public virtual ICollection<Partida> PartidasCasa { get; set; }
+        public virtual ICollection<Partida> PartidasFora { get; set; }
     }
 }

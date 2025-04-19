@@ -1,0 +1,69 @@
+﻿@model IEnumerable<LigaTabajara.Models.Partida>
+
+@{
+    ViewBag.Title = "Partidas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center">Lista de Partidas</h2>
+
+<p class="text-center">
+    @Html.ActionLink("Cadastrar Nova Partida", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-bordered text-center">
+        <thead class="thead-dark">
+            <tr>
+                <th class="text-center">Rodada</th>
+                <th class="text-center">Data/Hora</th>
+                <th class="text-center">Time Mandante</th>
+                <th class="text-center">Time Visitante</th>
+                <th class="text-center">Placar</th>
+                <th class="text-center">Estádio</th>
+                <th class="text-center">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Rodada</td>
+                        <td>@item.DataHora.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@(item.TimeCasa?.Nome ?? "N/D")</td>
+                        <td>@(item.TimeFora?.Nome ?? "N/D")</td>
+                        <td>
+                            @if (item.PlacarCasa.HasValue && item.PlacarFora.HasValue)
+                            {
+                                @($"{item.PlacarCasa} x {item.PlacarFora}")
+                            }
+                            else
+                            {
+                                @:Aguardando
+                            }
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.Estadio)</td>
+                        <td class="text-nowrap">
+                            @Html.ActionLink("Editar", "Edit", new { id = item.Id }, new { @class = "btn btn-sm btn-primary me-1" })
+                            @Html.ActionLink("Detalhes", "Details", new { id = item.Id }, new { @class = "btn btn-sm btn-success me-1" })
+                            @Html.ActionLink("Excluir", "Delete", new { id = item.Id }, new { @class = "btn btn-sm btn-danger me-1" })
+
+                            @if (!item.PlacarCasa.HasValue || !item.PlacarFora.HasValue)
+                            {
+                                @Html.ActionLink("Registrar Resultado", "RegistrarGol", new { id = item.Id }, new { @class = "btn btn-sm btn-warning" })
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center">Nenhuma partida cadastrada.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

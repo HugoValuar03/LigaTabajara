@@ -1,0 +1,44 @@
+﻿@model LigaTabajara.Models.Gol
+
+@{
+    ViewBag.Title = "Registrar Resultado";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center mt-4">Registrar Gol</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(model => model.PartidaId)
+
+    <div class="form-group mb-3">
+        @Html.LabelFor(model => model.JogadorId, "Jogador", new { @class = "form-label" })
+        @Html.DropDownListFor(model => model.JogadorId, ViewBag.Jogadores as SelectList, "-- Selecione o jogador --", new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.JogadorId, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group mb-3">
+        @Html.LabelFor(model => model.Minuto, new { @class = "form-label" })
+        @Html.TextBoxFor(model => model.Minuto, new { @class = "form-control", type = "number", min = 0 })
+        @Html.ValidationMessageFor(model => model.Minuto, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="col-md-3">
+        <label>Tipo do Gol</label>
+        <select name="tipoGol" class="form-control">
+            <option value="Normal">Normal</option>
+            <option value="Penalti">Penalti</option>
+            <option value="Falta">Falta</option>
+        </select>
+    </div>
+
+    <div class="form-check mb-3">
+        @Html.CheckBoxFor(model => model.Contra, new { @class = "form-check-input" })
+        @Html.LabelFor(model => model.Contra, "Gol Contra", new { @class = "form-check-label" })
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar Gol</button>
+    @Html.ActionLink("Cancelar", "Details", new { id = Model.PartidaId }, new { @class = "btn btn-secondary ms-2" })
+}

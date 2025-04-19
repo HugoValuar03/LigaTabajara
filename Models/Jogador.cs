@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace LigaTabajara.Models
 {
@@ -48,5 +49,8 @@ namespace LigaTabajara.Models
 
         [JsonIgnore] // Evita serialização circular
         public virtual Time Time { get; set; }
+
+        [JsonIgnore] // Evita serialização circular
+        public virtual ICollection<Gol> Gols { get; set; } = new List<Gol>();
     }
 }

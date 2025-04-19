@@ -1,0 +1,164 @@
+﻿@model LigaTabajara.Models.Partida
+
+@{
+    ViewBag.Title = "Detalhes da Partida";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var golsCasa = ViewBag.GolsCasa as List<LigaTabajara.Models.Gol>;
+    var golsFora = ViewBag.GolsFora as List<LigaTabajara.Models.Gol>;
+    var artilheiros = ViewBag.Artilheiros as List<LigaTabajara.Models.Artilheiros>; // Alterado para List<Artilheiros>
+}
+
+<h2 class="text-center mt-4 mb-4">Detalhes da Partida</h2>
+
+<div class="container">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white text-center">
+            <h4>Rodada @Model.Rodada - @Model.DataHora.ToString("dd/MM/yyyy HH:mm")</h4>
+        </div>
+        <div class="card-body">
+            <!-- Placar -->
+            <div class="row text-center mb-4">
+                <div class="col-md-5">
+                    <h3>@(Model.TimeCasa?.Nome ?? "Time da Casa")</h3>
+                    <h1 class="display-4">@(Model.PlacarCasa ?? 0)</h1>
+                </div>
+                <div class="col-md-2 d-flex align-items-center justify-content-center">
+                    <h2>X</h2>
+                </div>
+                <div class="col-md-5">
+                    <h3>@(Model.TimeFora?.Nome ?? "Time Visitante")</h3>
+                    <h1 class="display-4">@(Model.PlacarFora ?? 0)</h1>
+                </div>
+            </div>
+
+            <hr />
+
+            <!-- Gols do Time da Casa -->
+            <div class="mb-4">
+                <h3 class="text-center">Gols do @(Model.TimeCasa?.Nome ?? "Time da Casa")</h3>
+                @if (golsCasa != null && golsCasa.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Minuto</th>
+                                <th>Jogador</th>
+                                <th>Tipo</th>
+                                <th>Observação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var gol in golsCasa)
+                            {
+                                <tr>
+                                    <td>@gol.Minuto'</td>
+                                    <td>@(gol.Jogador?.Nome ?? "Desconhecido")</td>
+                                    <td>@gol.TipoGol</td>
+                                    <td>
+                                        @if (gol.Contra)
+                                        {
+                                            <span class="badge bg-danger">Gol Contra</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-info text-center">
+                        Nenhum gol marcado pelo time da casa.
+                    </div>
+                }
+            </div>
+
+            <!-- Gols do Time Visitante -->
+            <div class="mb-4">
+                <h3 class="text-center">Gols do @(Model.TimeFora?.Nome ?? "Time Visitante")</h3>
+                @if (golsFora != null && golsFora.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Minuto</th>
+                                <th>Jogador</th>
+                                <th>Tipo</th>
+                                <th>Observação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var gol in golsFora)
+                            {
+                                <tr>
+                                    <td>@gol.Minuto'</td>
+                                    <td>@(gol.Jogador?.Nome ?? "Desconhecido")</td>
+                                    <td>@gol.TipoGol</td>
+                                    <td>
+                                        @if (gol.Contra)
+                                        {
+                                            <span class="badge bg-danger">Gol Contra</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-info text-center">
+                        Nenhum gol marcado pelo time visitante.
+                    </div>
+                }
+            </div>
+
+            <!-- Artilheiros da Partida -->
+            <div class="mb-4">
+                <h3 class="text-center">Artilheiros da Partida</h3>
+                @if (artilheiros != null && artilheiros.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Jogador</th>
+                                <th>Time</th>
+                                <th>Gols</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var artilheiro in artilheiros)
+                            {
+                                <tr>
+                                    <td>@(artilheiro?.NomeJogador ?? "Desconhecido")</td>
+                                    <td>@(artilheiro?.NomeTime ?? "Desconhecido")</td>
+                                    <td>@(artilheiro?.TotalGols ?? 0)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-info text-center">
+                        Nenhum artilheiro registrado nesta partida.
+                    </div>
+                }
+            </div>
+
+            <hr />
+
+            <div class="d-flex justify-content-between">
+                <div>
+                    <strong>Estádio:</strong> @(Model.Estadio ?? "Não informado")
+                </div>
+                <div>
+                    @Html.ActionLink("Voltar para a Lista", "Index", null, new { @class = "btn btn-secondary" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

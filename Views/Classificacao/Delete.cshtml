@@ -1,0 +1,54 @@
+﻿@model LigaTabajara.Models.Classificacao
+
+@{
+    ViewBag.Title = "Excluir Classificação";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5" style="max-width: 700px">
+    <h2 class="text-center mb-4 text-danger">Tem certeza que deseja excluir este registro da classificação?</h2>
+
+    <div class="card shadow p-4">
+        <h4 class="mb-3">Detalhes da Classificação</h4>
+        <hr />
+
+        <dl class="row">
+            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Time.Nome)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.Time.Nome)</dd>
+
+            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Pontos)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.Pontos)</dd>
+
+            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Jogos)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.Jogos)</dd>
+
+            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Vitorias)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.Vitorias)</dd>
+
+            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Empates)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.Empates)</dd>
+
+            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Derrotas)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.Derrotas)</dd>
+
+            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.GolsPro)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.GolsPro)</dd>
+
+            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.GolsContra)</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.GolsContra)</dd>
+
+            <dt class="col-sm-4">Saldo de Gols</dt>
+            <dd class="col-sm-8">@(Model.GolsPro - Model.GolsContra)</dd>
+        </dl>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="d-flex justify-content-between mt-4">
+                <input type="submit" value="Excluir" class="btn btn-danger" />
+                @Html.ActionLink("Voltar para a Lista", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        }
+    </div>
+</div>

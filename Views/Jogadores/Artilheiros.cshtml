@@ -1,0 +1,35 @@
+﻿@model List<dynamic>
+
+@{
+    ViewBag.Title = "Artilheiros";
+}
+
+<h2>Artilheiros</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Jogador</th>
+            <th>Time</th>
+            <th>Total de Gols</th>
+            <th>Gols Contra</th>
+            <th>Saldo de Gols</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var artilheiro in Model)
+        {
+            <tr>
+                <td>@artilheiro.Jogador.Nome</td>
+                <td>@artilheiro.Jogador.Time.Nome</td>
+                <td>@artilheiro.TotalGols</td>
+                <td>@artilheiro.GolsContra</td>
+                <td>@artilheiro.SaldoGols</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>
+    @Html.ActionLink("Voltar para a Lista", "Index")
+</p>

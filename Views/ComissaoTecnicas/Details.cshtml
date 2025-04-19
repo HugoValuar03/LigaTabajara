@@ -1,43 +1,31 @@
 ﻿@model LigaTabajara.Models.ComissaoTecnica
 
 @{
-    ViewBag.Title = "Details";
-    Layout = "~/Views/Jogadores/Index.cshtml";
+    ViewBag.Title = "Detalhes da Comissão Técnica";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<h2>Detalhes da Comissão Técnica</h2>
 
 <div>
-    <h4>ComissaoTecnica</h4>
+    <h4>@Model.Nome</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
+        <dt>@Html.DisplayNameFor(model => model.Nome)</dt>
+        <dd>@Html.DisplayFor(model => model.Nome)</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
+        <dt>@Html.DisplayNameFor(model => model.Cargo)</dt>
+        <dd>@Html.DisplayFor(model => model.Cargo)</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.CargoString)
-        </dt>
+        <dt>@Html.DisplayNameFor(model => model.DataNascimento)</dt>
+        <dd>@Html.DisplayFor(model => model.DataNascimento)</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.CargoString)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.DataNascimento)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.DataNascimento)
-        </dd>
-
+        <dt>@Html.DisplayNameFor(model => model.Time.Nome)</dt>
+        <dd>@Html.DisplayFor(model => model.Time.Nome)</dd>
     </dl>
 </div>
+
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Editar", "Edit", new { id = Model.Id }, new { @class = "btn btn-warning me-1" })
+    @Html.ActionLink("Voltar para a Lista", "Index", null, new { @class = "btn btn-primary" })
 </p>

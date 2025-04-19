@@ -1,84 +1,77 @@
 ﻿@model LigaTabajara.Models.Jogador
 
+@{
+    ViewBag.Title = "Detalhes do Jogador";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Detalhes do Jogador</h2>
+
 <div>
-    <h4>Jogador</h4>
+    <h4>@Model.Nome</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Time.Nome)
-        </dt>
+        <dt>@Html.DisplayNameFor(model => model.Nome)</dt>
+        <dd>@Html.DisplayFor(model => model.Nome)</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Time.Nome)
-        </dd>
+        <dt>@Html.DisplayNameFor(model => model.DataNascimento)</dt>
+        <dd>@Html.DisplayFor(model => model.DataNascimento)</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
+        <dt>@Html.DisplayNameFor(model => model.Nacionalidade)</dt>
+        <dd>@Html.DisplayFor(model => model.Nacionalidade)</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
+        <dt>@Html.DisplayNameFor(model => model.Posicao)</dt>
+        <dd>@Html.DisplayFor(model => model.Posicao)</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.DataNascimento)
-        </dt>
+        <dt>@Html.DisplayNameFor(model => model.NumeroCamisa)</dt>
+        <dd>@Html.DisplayFor(model => model.NumeroCamisa)</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.DataNascimento)
-        </dd>
+        <dt>@Html.DisplayNameFor(model => model.Altura)</dt>
+        <dd>@Html.DisplayFor(model => model.Altura) cm</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Nacionalidade)
-        </dt>
+        <dt>@Html.DisplayNameFor(model => model.Peso)</dt>
+        <dd>@Html.DisplayFor(model => model.Peso) kg</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Nacionalidade)
-        </dd>
+        <dt>@Html.DisplayNameFor(model => model.PePreferido)</dt>
+        <dd>@Html.DisplayFor(model => model.PePreferido)</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Posicao)
-        </dt>
+        <dt>@Html.DisplayNameFor(model => model.Time.Nome)</dt>
+        <dd>@Html.DisplayFor(model => model.Time.Nome)</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Posicao)
-        </dd>
+        <dt>Total de Gols</dt>
+        <dd>@ViewBag.TotalGols</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.NumeroCamisa)
-        </dt>
+        <dt>Gols Contra</dt>
+        <dd>@ViewBag.GolsContra</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.NumeroCamisa)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Altura)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Altura)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Peso)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Peso)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.PePreferido)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.PePreferido)
-        </dd>
-
+        <dt>Saldo de Gols</dt>
+        <dd>@ViewBag.SaldoGols</dd>
     </dl>
 </div>
+
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Editar", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Voltar para a Lista", "Index")
 </p>
+<style>
+    /* Estilos personalizados */
+    .badge {
+        font-size: 0.9em;
+        padding: 5px 10px;
+    }
+
+    .border-bottom {
+        border-color: #dee2e6 !important;
+    }
+
+    /* Melhor espaçamento para dt/dd */
+    dt {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    dd {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+</style>

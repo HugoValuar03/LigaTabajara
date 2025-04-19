@@ -1,30 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using LigaTabajara.Models;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace LigaTabajara.Controllers
 {
     public class HomeController : Controller
     {
+        private LigaTabajaraContext db = new LigaTabajaraContext();
+
         public ActionResult Index()
         {
-            return View();
+            var times = db.Times.ToList();
+            ViewBag.LigaApta = IsLigaApta();
+            return View(times);
         }
 
-        public ActionResult About()
+        private bool IsLigaApta()
         {
-            ViewBag.Message = "Your application description page.";
+            var times = db.Times.ToList();
+            if (times.Count != 20) return false;
 
-            return View();
+            foreach (var time in times)
+            {
+                var jogadores = db.Jogadores.Where(j => j.TimeId == time.Id).Count();
+                var comissao = db.ComissaoTecnicas.Where(c => c.TimeId == time.Id).GroupBy(c => c.Cargo).Count();
+                if (jogadores < 30 || comissao < 5 || time.Status != Status.APTO)
+                    return false;
+            }
+            return true;
         }
 
-        public ActionResult Contact()
+        protected override void Dispose(bool disposing)
         {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

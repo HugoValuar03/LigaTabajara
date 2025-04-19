@@ -56,6 +56,12 @@
       <HintPath>packages\Microsoft.AspNet.TelemetryCorrelation.1.0.8\lib\net45\Microsoft.AspNet.TelemetryCorrelation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
@@ -146,13 +152,16 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\ClassificacaoController.cs" />
     <Compile Include="Controllers\ComissaoTecnicasController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JogadoresController.cs" />
+    <Compile Include="Controllers\PartidasController.cs" />
     <Compile Include="Controllers\TimesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\EnumExtensions.cs" />
     <Compile Include="Migrations\202504151426208_FirstMigration.cs" />
     <Compile Include="Migrations\202504151426208_FirstMigration.Designer.cs">
       <DependentUpon>202504151426208_FirstMigration.cs</DependentUpon>
@@ -177,8 +186,30 @@
     <Compile Include="Migrations\202504170634266_AlterandoJogadorETime.Designer.cs">
       <DependentUpon>202504170634266_AlterandoJogadorETime.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202504172237159_ConfigurandoComissao.cs" />
+    <Compile Include="Migrations\202504172237159_ConfigurandoComissao.Designer.cs">
+      <DependentUpon>202504172237159_ConfigurandoComissao.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202504172355081_RemoveCargoString.cs" />
+    <Compile Include="Migrations\202504172355081_RemoveCargoString.Designer.cs">
+      <DependentUpon>202504172355081_RemoveCargoString.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202504180044216_AdicionandoCrudPartidas.cs" />
+    <Compile Include="Migrations\202504180044216_AdicionandoCrudPartidas.Designer.cs">
+      <DependentUpon>202504180044216_AdicionandoCrudPartidas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202504190052320_ReformulacaoDosModels.cs" />
+    <Compile Include="Migrations\202504190052320_ReformulacaoDosModels.Designer.cs">
+      <DependentUpon>202504190052320_ReformulacaoDosModels.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202504190120538_AtualizarStatusTimes.cs" />
+    <Compile Include="Migrations\202504190120538_AtualizarStatusTimes.Designer.cs">
+      <DependentUpon>202504190120538_AtualizarStatusTimes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Cargo.cs" />
+    <Compile Include="Models\Artilheiros.cs" />
+    <Compile Include="Models\CargoUnicoAtributte.cs" />
     <Compile Include="Models\Classificacao.cs" />
     <Compile Include="Models\Gol.cs" />
     <Compile Include="Models\Partida.cs" />
@@ -186,6 +217,8 @@
     <Compile Include="Models\CorUniforme.cs" />
     <Compile Include="Models\Jogador.cs" />
     <Compile Include="Models\LigaTabajaraContext.cs" />
+    <Compile Include="Models\RegistrarResultado.cs" />
+    <Compile Include="Models\RegistrarResultadosViewModel.cs" />
     <Compile Include="Models\Status.cs" />
     <Compile Include="Models\Time.cs" />
     <Compile Include="Models\PePreferido.cs" />
@@ -209,6 +242,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\PagedList.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -244,11 +278,6 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\CadastroJogadores.cshtml" />
-    <Content Include="Views\ComissaoTecnicas\Create.cshtml" />
-    <Content Include="Views\ComissaoTecnicas\Delete.cshtml" />
-    <Content Include="Views\ComissaoTecnicas\Details.cshtml" />
-    <Content Include="Views\ComissaoTecnicas\Edit.cshtml" />
-    <Content Include="Views\ComissaoTecnicas\Index.cshtml" />
     <Content Include="Views\Jogadores\Create.cshtml" />
     <Content Include="Views\Jogadores\Index.cshtml" />
     <Content Include="Views\Times\Create.cshtml" />
@@ -259,6 +288,24 @@
     <Content Include="Views\Times\Delete.cshtml" />
     <Content Include="Views\Times\Edit.cshtml" />
     <Content Include="Views\Times\Details.cshtml" />
+    <Content Include="Views\ComissaoTecnicas\Index.cshtml" />
+    <Content Include="Views\ComissaoTecnicas\Create.cshtml" />
+    <Content Include="Views\ComissaoTecnicas\Delete.cshtml" />
+    <Content Include="Views\ComissaoTecnicas\Edit.cshtml" />
+    <Content Include="Views\ComissaoTecnicas\Details.cshtml" />
+    <Content Include="Views\Partidas\Create.cshtml" />
+    <Content Include="Views\Partidas\Delete.cshtml" />
+    <Content Include="Views\Partidas\Details.cshtml" />
+    <Content Include="Views\Partidas\Edit.cshtml" />
+    <Content Include="Views\Partidas\Index.cshtml" />
+    <Content Include="Views\Partidas\RegistrarGol.cshtml">
+      <BrowseToURL>~/Partidas/RegistrarResultado</BrowseToURL>
+    </Content>
+    <Content Include="Views\Jogadores\Artilheiros.cshtml" />
+    <Content Include="Views\Classificacao\Delete.cshtml" />
+    <Content Include="Views\Classificacao\Details.cshtml" />
+    <Content Include="Views\Classificacao\Edit.cshtml" />
+    <Content Include="Views\Classificacao\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -308,6 +355,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202504170634266_AlterandoJogadorETime.resx">
       <DependentUpon>202504170634266_AlterandoJogadorETime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504172237159_ConfigurandoComissao.resx">
+      <DependentUpon>202504172237159_ConfigurandoComissao.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504172355081_RemoveCargoString.resx">
+      <DependentUpon>202504172355081_RemoveCargoString.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504180044216_AdicionandoCrudPartidas.resx">
+      <DependentUpon>202504180044216_AdicionandoCrudPartidas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504190052320_ReformulacaoDosModels.resx">
+      <DependentUpon>202504190052320_ReformulacaoDosModels.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504190120538_AtualizarStatusTimes.resx">
+      <DependentUpon>202504190120538_AtualizarStatusTimes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

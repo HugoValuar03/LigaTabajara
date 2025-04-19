@@ -18,3 +18,68 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+.btn-voltar{
+    background-color: #3498db;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-voltar:hover {
+    background-color: #2980b9;
+    color: white;
+}
+
+.btn-editar {
+    background-color: #007BFF;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-editar:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+.btn-detalhes {
+    background-color: #28A745;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-detalhes:hover {
+    background-color: #1e7e34;
+    color: white;
+}
+
+.btn-excluir {
+    background-color: #DC3545;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-excluir:hover {
+    background-color: #c82333;
+    color: white;
+}

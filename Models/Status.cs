@@ -9,8 +9,8 @@ namespace LigaTabajara.Models
 	public enum Status
 	{
 		[Display(Name = "Apto")]
-		APTO = 1,
+		APTO = 0,
 		[Display(Name = "Não Apto")]
-		NAO_APTO = 2
+		NAO_APTO = 1
 	}
 }
