@@ -1,77 +1,104 @@
 ﻿@model LigaTabajara.Models.Jogador
 
 @{
-    ViewBag.Title = "Detalhes do Jogador";
+    ViewBag.Title = $"Detalhes do Jogador: {Model.Nome}";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Detalhes do Jogador</h2>
+@section Styles {
+    <style>
+        .card {
+            border-radius: 10px;
+        }
 
-<div>
-    <h4>@Model.Nome</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>@Html.DisplayNameFor(model => model.Nome)</dt>
-        <dd>@Html.DisplayFor(model => model.Nome)</dd>
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            font-size: 1.5rem;
+            padding: 15px;
+        }
 
-        <dt>@Html.DisplayNameFor(model => model.DataNascimento)</dt>
-        <dd>@Html.DisplayFor(model => model.DataNascimento)</dd>
+        .card-body {
+            padding: 20px;
+        }
 
-        <dt>@Html.DisplayNameFor(model => model.Nacionalidade)</dt>
-        <dd>@Html.DisplayFor(model => model.Nacionalidade)</dd>
+        .row dt {
+            font-weight: bold;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
 
-        <dt>@Html.DisplayNameFor(model => model.Posicao)</dt>
-        <dd>@Html.DisplayFor(model => model.Posicao)</dd>
+        .row dd {
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
 
-        <dt>@Html.DisplayNameFor(model => model.NumeroCamisa)</dt>
-        <dd>@Html.DisplayFor(model => model.NumeroCamisa)</dd>
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
 
-        <dt>@Html.DisplayNameFor(model => model.Altura)</dt>
-        <dd>@Html.DisplayFor(model => model.Altura) cm</dd>
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
 
-        <dt>@Html.DisplayNameFor(model => model.Peso)</dt>
-        <dd>@Html.DisplayFor(model => model.Peso) kg</dd>
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
 
-        <dt>@Html.DisplayNameFor(model => model.PePreferido)</dt>
-        <dd>@Html.DisplayFor(model => model.PePreferido)</dd>
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+    </style>
+}
 
-        <dt>@Html.DisplayNameFor(model => model.Time.Nome)</dt>
-        <dd>@Html.DisplayFor(model => model.Time.Nome)</dd>
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h4>@ViewBag.Title</h4>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nome)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Nome)</dd>
 
-        <dt>Total de Gols</dt>
-        <dd>@ViewBag.TotalGols</dd>
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.DataNascimento)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.DataNascimento, "{0:dd/MM/yyyy}")</dd>
 
-        <dt>Gols Contra</dt>
-        <dd>@ViewBag.GolsContra</dd>
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nacionalidade)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Nacionalidade)</dd>
 
-        <dt>Saldo de Gols</dt>
-        <dd>@ViewBag.SaldoGols</dd>
-    </dl>
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Posicao)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Posicao)</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NumeroCamisa)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.NumeroCamisa)</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Altura)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Altura) cm</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Peso)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Peso) kg</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.PePreferido)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.PePreferido)</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Time.Nome)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Time.Nome)</dd>
+
+            <dt class="col-sm-3">Total de Gols</dt>
+            <dd class="col-sm-9">@ViewBag.TotalGols</dd>
+
+            <dt class="col-sm-3">Gols Contra</dt>
+            <dd class="col-sm-9">@ViewBag.GolsContra</dd>
+
+            <dt class="col-sm-3">Saldo de Gols</dt>
+            <dd class="col-sm-9">@ViewBag.SaldoGols</dd>
+        </dl>
+
+        <div class="mt-3">
+            <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-primary">Editar</a>
+            <a href="@Url.Action("Index")" class="btn btn-secondary">Voltar para a Lista</a>
+        </div>
+    </div>
 </div>
-
-<p>
-    @Html.ActionLink("Editar", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Voltar para a Lista", "Index")
-</p>
-<style>
-    /* Estilos personalizados */
-    .badge {
-        font-size: 0.9em;
-        padding: 5px 10px;
-    }
-
-    .border-bottom {
-        border-color: #dee2e6 !important;
-    }
-
-    /* Melhor espaçamento para dt/dd */
-    dt {
-        padding-top: 8px;
-        padding-bottom: 8px;
-    }
-
-    dd {
-        padding-top: 8px;
-        padding-bottom: 8px;
-    }
-</style>

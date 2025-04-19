@@ -91,6 +91,36 @@ namespace LigaTabajara.Controllers
             return View(jogador);
         }
 
+        public ActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Jogador jogador = db.Jogadores
+                .Include(j => j.Time)
+                .Include(j => j.Gols)
+                .SingleOrDefault(j => j.Id == id);
+
+            if (jogador == null)
+            {
+                TempData["ErrorMessage"] = "Jogador não encontrado.";
+                return RedirectToAction("Index");
+            }
+
+            // Calculate goal statistics
+            var totalGols = jogador.Gols.Count(g => !g.Contra);
+            var golsContra = jogador.Gols.Count(g => g.Contra);
+            var saldoGols = totalGols - golsContra;
+
+            ViewBag.TotalGols = totalGols;
+            ViewBag.GolsContra = golsContra;
+            ViewBag.SaldoGols = saldoGols;
+
+            return View(jogador);
+        }
+
         // POST: Jogadores/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
