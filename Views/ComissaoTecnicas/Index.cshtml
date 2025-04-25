@@ -15,12 +15,13 @@
 @using (Html.BeginForm("Index", "ComissaoTecnicas", FormMethod.Get))
 {
     <div class="row">
+        <label for="searchCargo" class="form-label">Cargo</label>
         <div class="col-md-6">
-            <label for="searchCargo" class="form-label">Cargo</label>
             @Html.DropDownList("searchCargo", ViewBag.CargoList as IEnumerable<SelectListItem>, new { @class = "form-control", onchange = "this.form.submit()" })
         </div>
     </div>
 }
+
 
 <table class="table table-bordered mt-3">
     <tr class="text-center">

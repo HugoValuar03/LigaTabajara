@@ -32,44 +32,21 @@ namespace LigaTabajara.Controllers
         public ActionResult Details(int? id)
         {
             if (id == null)
+            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
 
-            var partida = db.Partidas
+            Partida partida = db.Partidas
                 .Include(p => p.TimeCasa)
                 .Include(p => p.TimeFora)
-                .FirstOrDefault(p => p.Id == id);
+                .Include(p => p.Gols)
+                .Include(p => p.Gols.Select(g => g.Jogador))
+                .SingleOrDefault(p => p.Id == id);
 
             if (partida == null)
+            {
                 return HttpNotFound();
-
-            var gols = db.Gols
-                .Include(g => g.Jogador)
-                .Include(g => g.Jogador.Time)
-                .Where(g => g.PartidaId == id)
-                .ToList();
-
-            var golsCasa = gols
-                .Where(g => (g.Jogador.TimeId == partida.TimeCasaId && !g.Contra) || (g.Jogador.TimeId == partida.TimeForaId && g.Contra))
-                .ToList();
-            var golsFora = gols
-                .Where(g => (g.Jogador.TimeId == partida.TimeForaId && !g.Contra) || (g.Jogador.TimeId == partida.TimeCasaId && g.Contra))
-                .ToList();
-
-            var artilheiros = gols
-                .GroupBy(g => g.Jogador)
-                .Select(g => new Artilheiros
-                {
-                    NomeJogador = g.Key.Nome,
-                    NomeTime = g.Key.Time.Nome,
-                    TotalGols = g.Count(x => !x.Contra)
-                })
-                .Where(a => a.TotalGols > 0)
-                .OrderByDescending(a => a.TotalGols)
-                .ToList();
-
-            ViewBag.GolsCasa = golsCasa;
-            ViewBag.GolsFora = golsFora;
-            ViewBag.Artilheiros = artilheiros;
+            }
 
             return View(partida);
         }
@@ -122,6 +99,11 @@ namespace LigaTabajara.Controllers
                             TipoGol = tipoGol[i],
                             Contra = contra[i]
                         });
+
+                        // Atualizar o SaldoGols do jogador
+                        var golsFavor = db.Gols.Count(g => g.JogadorId == jogador.Id && !g.Contra);
+                        var golsContra = db.Gols.Count(g => g.JogadorId == jogador.Id && g.Contra);
+                        jogador.SaldoGols = golsFavor - golsContra;
                     }
 
                     if (ModelState.IsValid)
@@ -184,9 +166,12 @@ namespace LigaTabajara.Controllers
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            var partida = db.Partidas.Find(id);
-            if (partida == null)
-                return HttpNotFound();
+            Partida partida = db.Partidas
+                .Include(p => p.TimeCasa)
+                .Include(p => p.TimeFora)
+                .Include(p => p.Gols)
+                .Include(p => p.Gols.Select(g => g.Jogador))
+                .SingleOrDefault(p => p.Id == id);
 
             return View(partida);
         }
@@ -196,9 +181,26 @@ namespace LigaTabajara.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             var partida = db.Partidas.Find(id);
-            db.Gols.RemoveRange(db.Gols.Where(g => g.PartidaId == id));
+            var gols = db.Gols.Where(g => g.PartidaId == id).ToList();
+            var jogadoresAfetados = gols.Select(g => g.JogadorId).Distinct().ToList();
+
+            db.Gols.RemoveRange(gols);
             db.Partidas.Remove(partida);
             db.SaveChanges();
+
+            // Recalcular o SaldoGols dos jogadores afetados
+            foreach (var jogadorId in jogadoresAfetados)
+            {
+                var jogador = db.Jogadores.Find(jogadorId);
+                if (jogador != null)
+                {
+                    var golsFavor = db.Gols.Count(g => g.JogadorId == jogador.Id && !g.Contra);
+                    var golsContra = db.Gols.Count(g => g.JogadorId == jogador.Id && g.Contra);
+                    jogador.SaldoGols = golsFavor - golsContra;
+                }
+            }
+            db.SaveChanges();
+
             AtualizarClassificacao(null);
             return RedirectToAction("Index");
         }
@@ -244,6 +246,11 @@ namespace LigaTabajara.Controllers
                 else if (gol.Contra && jogador.TimeId == partidas.TimeForaId)
                     partidas.PlacarCasa = (partidas.PlacarCasa ?? 0) + 1;
 
+                // Atualizar o SaldoGols do jogador
+                var golsFavor = db.Gols.Count(g => g.JogadorId == jogador.Id && !g.Contra);
+                var golsContra = db.Gols.Count(g => g.JogadorId == jogador.Id && g.Contra);
+                jogador.SaldoGols = golsFavor - golsContra;
+
                 db.SaveChanges();
                 AtualizarClassificacao(partidas);
                 return RedirectToAction("Details", new { id = gol.PartidaId });
@@ -260,75 +267,39 @@ namespace LigaTabajara.Controllers
             return View(gol);
         }
 
-        private void AtualizarClassificacao(Partida partidaAtualizada)
+        private void AtualizarClassificacao(Partida partida)
         {
-            var times = db.Times.ToList();
-            foreach (var time in times)
+            var partidas = db.Partidas
+                .Include(p => p.TimeCasa)
+                .Include(p => p.TimeFora)
+                .ToList();
+
+            foreach (var time in db.Times.ToList())
             {
-                var tabela = db.Classificacoes.FirstOrDefault(t => t.TimeId == time.Id);
-                if (tabela == null)
+                var classificacao = db.Classificacoes
+                    .SingleOrDefault(c => c.TimeId == time.Id);
+
+                if (classificacao == null)
                 {
-                    tabela = new Classificacao { TimeId = time.Id };
-                    db.Classificacoes.Add(tabela);
+                    classificacao = new Classificacao { TimeId = time.Id };
+                    db.Classificacoes.Add(classificacao);
                 }
 
-                tabela.Pontos = 0;
-                tabela.Jogos = 0;
-                tabela.Vitorias = 0;
-                tabela.Empates = 0;
-                tabela.Derrotas = 0;
-                tabela.GolsPro = 0;
-                tabela.GolsContra = 0;
-                tabela.SaldoGols = 0;
+                var jogosCasa = partidas.Where(p => p.TimeCasaId == time.Id).ToList();
+                var jogosFora = partidas.Where(p => p.TimeForaId == time.Id).ToList();
 
-                var partidas = db.Partidas
-                    .Where(p => (p.TimeCasaId == time.Id || p.TimeForaId == time.Id) && p.PlacarCasa.HasValue && p.PlacarFora.HasValue)
-                    .ToList();
-
-                foreach (var partida in partidas)
-                {
-                    tabela.Jogos++;
-                    if (partida.TimeCasaId == time.Id)
-                    {
-                        tabela.GolsPro += partida.PlacarCasa.Value;
-                        tabela.GolsContra += partida.PlacarFora.Value;
-                        if (partida.PlacarCasa > partida.PlacarFora)
-                        {
-                            tabela.Vitorias++;
-                            tabela.Pontos += 3;
-                        }
-                        else if (partida.PlacarCasa == partida.PlacarFora)
-                        {
-                            tabela.Empates++;
-                            tabela.Pontos += 1;
-                        }
-                        else
-                        {
-                            tabela.Derrotas++;
-                        }
-                    }
-                    else
-                    {
-                        tabela.GolsPro += partida.PlacarFora.Value;
-                        tabela.GolsContra += partida.PlacarCasa.Value;
-                        if (partida.PlacarFora > partida.PlacarCasa)
-                        {
-                            tabela.Vitorias++;
-                            tabela.Pontos += 3;
-                        }
-                        else if (partida.PlacarFora == partida.PlacarCasa)
-                        {
-                            tabela.Empates++;
-                            tabela.Pontos += 1;
-                        }
-                        else
-                        {
-                            tabela.Derrotas++;
-                        }
-                    }
-                    tabela.SaldoGols = tabela.GolsPro - tabela.GolsContra;
-                }
+                classificacao.Jogos = jogosCasa.Count + jogosFora.Count;
+                classificacao.GolsPro = jogosCasa.Sum(p => p.PlacarCasa ?? 0) + jogosFora.Sum(p => p.PlacarFora ?? 0);
+                classificacao.GolsContra = jogosCasa.Sum(p => p.PlacarFora ?? 0) + jogosFora.Sum(p => p.PlacarCasa ?? 0);
+                classificacao.Vitorias = jogosCasa.Count(p => (p.PlacarCasa ?? 0) > (p.PlacarFora ?? 0)) +
+                                        jogosFora.Count(p => (p.PlacarFora ?? 0) > (p.PlacarCasa ?? 0));
+                classificacao.Empates = jogosCasa.Count(p => (p.PlacarCasa ?? 0) == (p.PlacarFora ?? 0)) +
+                                        jogosFora.Count(p => (p.PlacarFora ?? 0) == (p.PlacarCasa ?? 0));
+                classificacao.Derrotas = jogosCasa.Count(p => (p.PlacarCasa ?? 0) < (p.PlacarFora ?? 0)) +
+                                         jogosFora.Count(p => (p.PlacarFora ?? 0) < (p.PlacarCasa ?? 0));
+                classificacao.Pontos = (classificacao.Vitorias * 3) + classificacao.Empates;
             }
+
             db.SaveChanges();
         }
 

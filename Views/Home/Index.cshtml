@@ -21,7 +21,7 @@
                     <p class="card-text">
                         <strong>Cidade:</strong> @time.Estado<br />
                         <strong>Estádio:</strong> @time.Estadio (Capacidade: @time.CapacidadeEstadio)<br />
-                        <strong>Cor do Uniforme:</strong> @time.CorUniforme<br />
+                        <strong>Cor do Uniforme:</strong> @(time.CorUniforme == 0 ? "PRIMARIA" : "SECUNDARIA")<br />
                         <strong>Status:</strong> <span class="badge @(@time.Status == LigaTabajara.Models.Status.APTO ? "bg-success" : "bg-danger")">@time.Status</span>
                     </p>
                     <a href="@Url.Action("Details", "Times", new { id = time.Id })" class="btn btn-primary">Detalhes</a>

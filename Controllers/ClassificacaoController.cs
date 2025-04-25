@@ -1,4 +1,6 @@
 ﻿using LigaTabajara.Models;
+using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -47,12 +49,29 @@ namespace LigaTabajara.Controllers
 
             Classificacao classificacao = db.Classificacoes
                 .Include(c => c.Time)
+                .Include(c => c.Time.Jogadores)
+                .Include(c => c.Time.Jogadores.Select(j => j.Gols))
                 .SingleOrDefault(c => c.Id == id);
 
             if (classificacao == null)
             {
                 return HttpNotFound();
             }
+
+            // Calcular o saldo de gols do time somando o SaldoGols dos jogadores
+            var saldoGolsTime = classificacao.Time?.Jogadores?.Sum(j => j.SaldoGols) ?? 0;
+            ViewBag.SaldoGolsTimeJogadores = saldoGolsTime;
+
+            // Listar os jogadores com nome, saldo de gols e total de gols usando Tuple
+            var jogadores = classificacao.Time?.Jogadores
+                ?.Select(j => new Tuple<string, int, int>(
+                    j.Nome,
+                    j.Gols?.Count(g => !g.Contra) ?? 0,
+                    j.SaldoGols
+                ))
+                .OrderByDescending(j => j.Item3) // Item3 é o SaldoGols
+                .ToList() ?? new List<Tuple<string, int, int>>();
+            ViewBag.Jogadores = jogadores;
 
             return View(classificacao);
         }

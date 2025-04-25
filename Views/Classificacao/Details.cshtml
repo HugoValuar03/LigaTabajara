@@ -37,9 +37,34 @@
             <dt class="col-sm-4">@Html.DisplayNameFor(model => model.GolsContra)</dt>
             <dd class="col-sm-8">@Html.DisplayFor(model => model.GolsContra)</dd>
 
-            <dt class="col-sm-4">Saldo de Gols</dt>
+            <dt class="col-sm-4">Saldo de Gols (Placar)</dt>
             <dd class="col-sm-8">@(Model.GolsPro - Model.GolsContra)</dd>
+
+            <dt class="col-sm-4">Saldo de Gols (Jogadores)</dt>
+            <dd class="col-sm-8">@ViewBag.SaldoGolsTimeJogadores</dd>
         </dl>
+
+        <!-- Tabela de jogadores e seus saldos de gols -->
+        <h4 class="mt-4">Saldos de Gols dos Jogadores</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nome do Jogador</th>
+                    <th>Total de Gols</th>
+                    <th>Saldo de Gols</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var jogador in ViewBag.Jogadores)
+                {
+                    <tr>
+                        <td>@jogador.Item1</td> <!-- Nome -->
+                        <td>@jogador.Item2</td> <!-- TotalGols -->
+                        <td>@jogador.Item3</td> <!-- SaldoGols -->
+                    </tr>
+                }
+            </tbody>
+        </table>
 
         <div class="d-flex justify-content-between mt-4">
             @Html.ActionLink("Editar", "Edit", new { id = Model.Id }, new { @class = "btn btn-warning" })

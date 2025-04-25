@@ -12,6 +12,7 @@
         <table class="table table-striped table-hover table-bordered text-center">
             <thead class="thead-dark">
                 <tr>
+                    <th class="text-center">Colocação</th>
                     <th class="text-center">Time</th>
                     <th class="text-center">Pontos</th>
                     <th class="text-center">Jogos</th>
@@ -27,9 +28,11 @@
             <tbody>
                 @if (Model != null && Model.Any())
                 {
+                    int colocacao = 1; 
                     foreach (var item in Model)
                     {
                         <tr>
+                            <td>@colocacao</td>
                             <td>@Html.DisplayFor(modelItem => item.Time.Nome)</td>
                             <td>@Html.DisplayFor(modelItem => item.Pontos)</td>
                             <td>@Html.DisplayFor(modelItem => item.Jogos)</td>
@@ -45,6 +48,7 @@
                                 @Html.ActionLink("Excluir", "Delete", new { id = item.Id }, new { @class = "btn btn-sm btn-danger me-1" })
                             </td>
                         </tr>
+                        colocacao++;
                     }
                 }
                 else

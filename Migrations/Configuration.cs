@@ -275,6 +275,21 @@
                 }
                 context.SaveChanges();
             }
+
+            if (context.Jogadores.Any())
+            {
+                var jogadores = context.Jogadores
+                    .Include(j => j.Gols)
+                    .ToList();
+
+                foreach (var jogador in jogadores)
+                {
+                    var totalGolsFavor = jogador.Gols.Count(g => !g.Contra);
+                    var totalGolsContra = jogador.Gols.Count(g => g.Contra);
+                    jogador.SaldoGols = totalGolsFavor - totalGolsContra;
+                }
+                context.SaveChanges();
+            }
         }
 
         private void DistribuirGols(LigaTabajaraContext context, Partida partida, List<Jogador> jogadoresTime, List<Jogador> jogadoresTimeAdversario, int totalGols, bool isTimeCasa, Random random)

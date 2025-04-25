@@ -52,5 +52,8 @@ namespace LigaTabajara.Models
 
         [JsonIgnore] // Evita serialização circular
         public virtual ICollection<Gol> Gols { get; set; } = new List<Gol>();
+
+        [Display(Name = "Saldo de Gols")]
+        public int SaldoGols { get; set; }
     }
 }

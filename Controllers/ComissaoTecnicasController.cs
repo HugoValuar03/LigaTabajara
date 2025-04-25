@@ -205,6 +205,7 @@ namespace LigaTabajara.Controllers
 
             // Atualizar o status do time associado
             var time = db.Times
+                .Include(t => t.Nome)
                 .Include(t => t.Jogadores)
                 .Include(t => t.ComissaoTecnicas)
                 .SingleOrDefault(t => t.Id == timeId);

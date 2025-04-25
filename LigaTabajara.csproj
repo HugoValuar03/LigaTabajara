@@ -206,6 +206,10 @@
     <Compile Include="Migrations\202504190120538_AtualizarStatusTimes.Designer.cs">
       <DependentUpon>202504190120538_AtualizarStatusTimes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202504242340263_AddSaldoGolsToJogador.cs" />
+    <Compile Include="Migrations\202504242340263_AddSaldoGolsToJogador.Designer.cs">
+      <DependentUpon>202504242340263_AddSaldoGolsToJogador.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Cargo.cs" />
     <Compile Include="Models\Artilheiros.cs" />
@@ -274,10 +278,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Home\CadastroJogadores.cshtml" />
     <Content Include="Views\Jogadores\Create.cshtml" />
     <Content Include="Views\Jogadores\Index.cshtml" />
     <Content Include="Views\Times\Create.cshtml" />
@@ -370,6 +371,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202504190120538_AtualizarStatusTimes.resx">
       <DependentUpon>202504190120538_AtualizarStatusTimes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504242340263_AddSaldoGolsToJogador.resx">
+      <DependentUpon>202504242340263_AddSaldoGolsToJogador.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

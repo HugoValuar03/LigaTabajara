@@ -1,8 +1,16 @@
 ﻿@model LigaTabajara.Models.Time
 
+@using LigaTabajara.Helpers
+
 @{
     ViewBag.Title = $"Detalhes do Time: {Model.Nome}";
 }
+
+<style>
+    .lista-jogadores {
+        text-align: center;
+    }
+</style>
 
 <h2 class="text-center mb-4">Detalhes do Time: @Model.Nome</h2>
 
@@ -22,14 +30,7 @@
             <dd class="col-sm-9">@Model.Estadio (Capacidade: @Model.CapacidadeEstadio)</dd>
             <dt class="col-sm-3">Cor do Uniforme</dt>
             <dd class="col-sm-9">
-                @if ((int)Model.CorUniforme == 0)
-                {
-                    @:PRIMARIA
-                }
-                else
-                {
-                    @:SECUNDARIA
-                }
+                @(Model.CorUniforme == 0 ? "Primária" : "Secundária")
             </dd>
             <dt class="col-sm-3">Status</dt>
             <dd class="col-sm-9"><span class="badge @(@Model.Status == LigaTabajara.Models.Status.APTO ? "bg-success" : "bg-danger")">@Model.Status</span></dd>
@@ -40,20 +41,20 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Nome</th>
-            <th>Posição</th>
-            <th>Número da Camisa</th>
-            <th>Ações</th>
+            <th class="lista-jogadores">Nome</th>
+            <th class="lista-jogadores">Posição</th>
+            <th class="lista-jogadores">Número da Camisa</th>
+            <th class="lista-jogadores">Ações</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var jogador in Model.Jogadores)
         {
-            <tr>
-                <td>@jogador.Nome</td>
-                <td>@jogador.Posicao</td>
-                <td>@jogador.NumeroCamisa</td>
-                <td>
+            <tr class="lista-jogadores">
+                <td class="lista-jogadores">@jogador.Nome</td>
+                <td class="lista-jogadores">@jogador.Posicao.GetDisplayName()</td>
+                <td class="lista-jogadores">@jogador.NumeroCamisa</td>
+                <td class="lista-jogadores">
                     <a href="@Url.Action("Details", "Jogadores", new { id = jogador.Id })" class="btn btn-sm btn-info">Detalhes</a>
                 </td>
             </tr>
@@ -75,7 +76,7 @@
         {
             <tr>
                 <td>@membro.Nome</td>
-                <td>@membro.Cargo</td>
+                <td>@membro.Cargo.GetDisplayName()</td>
                 <td>
                     <a href="@Url.Action("Details", "ComissaoTecnicas", new { id = membro.Id })" class="btn btn-sm btn-info">Detalhes</a>
                 </td>

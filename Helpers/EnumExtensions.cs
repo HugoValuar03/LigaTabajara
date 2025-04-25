@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Reflection;
 
 namespace LigaTabajara.Helpers
@@ -8,16 +9,22 @@ namespace LigaTabajara.Helpers
     {
         public static string GetDisplayName(this Enum enumValue)
         {
-            var member = enumValue.GetType().GetMember(enumValue.ToString());
-
-            if (member.Length > 0)
+            if (enumValue == null)
             {
-                var attr = member[0].GetCustomAttribute<DisplayAttribute>();
-                if (attr != null)
-                    return attr.Name;
+                return "Desconhecido";
             }
 
-            return enumValue.ToString();
+            var memberInfo = enumValue.GetType()
+                .GetMember(enumValue.ToString())
+                .FirstOrDefault();
+
+            if (memberInfo == null)
+            {
+                return enumValue.ToString();
+            }
+
+            var displayAttribute = memberInfo.GetCustomAttribute<DisplayAttribute>();
+            return displayAttribute?.GetName() ?? enumValue.ToString();
         }
     }
 }
